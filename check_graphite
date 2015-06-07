@@ -54,11 +54,13 @@ graphite.add_option("P", "password", "Password for authentication")
 graphite.add_option("H", "hostname", "Host name to use in the URL")
 graphite.add_option("n", "none", "Ignore None values: 'yes' or 'no' (default no)")
 graphite.add_option("f", "function", "Function to run on retrieved values: avg/min/max/last/sum (default 'avg')",
-  default="avg")
+graphite.add_option("t", "timeout", "timeout in seconds for accessing graphite", default="20")
 
 graphite.enable_status("warning")
 graphite.enable_status("critical")
 graphite.start()
+
+timeout = int(graphite.options.timeout)
 
 if graphite.options.username and graphite.options.password:
 	password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
@@ -74,7 +76,7 @@ if graphite.options.hostname:
     graphite.options.hostname.replace('.','_'))
 
 try:
-    usock = urllib2.urlopen(graphite.options.url)
+    usock = urllib2.urlopen(graphite.options.url, timeout=timeout)
     data = usock.read()
     usock.close()
 except socket.timeout:
