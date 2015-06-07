@@ -80,7 +80,7 @@ try:
     data = usock.read()
     usock.close()
 except socket.timeout:
-    graphite.unknown_error("Error connecting to Graphite: Timeout of 20 seconds reached")
+    graphite.unknown_error("Error connecting to Graphite: Timeout of %d seconds reached" % timeout)
 
 
 if graphite.options.function not in functionmap:
