@@ -22,6 +22,7 @@
 
 from NagAconda import Plugin
 import urllib2
+import socket
 
 def f_avg(values):
   return sum(values)/len(values);
@@ -72,9 +73,13 @@ if graphite.options.hostname:
   graphite.options.url = graphite.options.url.replace('@HOSTNAME@', 
     graphite.options.hostname.replace('.','_'))
 
-usock = urllib2.urlopen(graphite.options.url)
-data = usock.read()
-usock.close()
+try:
+    usock = urllib2.urlopen(graphite.options.url)
+    data = usock.read()
+    usock.close()
+except socket.timeout:
+    graphite.unknown_error("Error connecting to Graphite: Timeout of 20 seconds reached")
+
 
 if graphite.options.function not in functionmap:
   graphite.unknown_error("Bad function name given to -f/--function option: '%s'" % graphite.options.function)
